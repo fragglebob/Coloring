@@ -1,0 +1,104 @@
+a,
+a:hover,
+a:visited {
+	color:#ff63bc;
+}
+html, body{
+	height: 100%;
+	margin: 0;
+}
+#viewport {
+	overflow:hidden;
+	width:100%;
+	height: 100%;
+	color:#000;
+	background-color:#fff;
+	position: fixed;
+}
+#wall {
+	cursor: move;
+}
+.square {
+	/* Code sets CSS to:
+	 * position: absolute,
+	 * left: x,
+	 * top: y,
+	 * width: 100,
+	 * height: 100,
+	 * overflow: hidden
+	 */
+	font-size:18px;
+	font-weight:bold;
+	border: 1px solid #000;
+	background: white;
+}
+#color-tiles {
+	position: fixed;
+	top: 0;
+	right: 0;
+	height: 100%;
+	width: 100px;
+	background: #222;
+}
+#color-tiles ul{
+	margin: 8px;
+	padding: 0;
+}
+#color-tiles li.color{
+	width: 40px;
+	height: 40px;
+	list-style: none;
+	margin: 1px;
+	float: left;	
+}
+#color-tiles li.active-color {
+	width: 82px;
+	height: 82px;
+}
+#color-tiles #draw {
+	color: white;
+	font-family: sans-serif;
+	font-weight: bold;
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	background: blue;
+	padding: 5px;
+	text-align: center;
+}
+.purple{
+    background: #5B3A8F;
+}
+.pink{
+    background: #F02F6A;
+}
+.red{
+    background: #D10020;
+}
+.orange{
+    background: #EB540A;
+}
+.yellow{
+    background: #F3CD08;
+}
+.lime {
+	background: #94DE02;
+}
+.green{
+    background: #32B33C; /* #61B40D */
+}
+.turk{
+	background: #0FD8CB;
+}
+.blue{
+    background: #327CCB;
+}
+.lightblue{
+    background: #5CBFDE;
+}
+.white{
+    background: #FFF;
+}
+.black{
+    background: #000;
+}

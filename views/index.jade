@@ -1,0 +1,28 @@
+#viewport
+	#wall
+#color-tiles
+	ul
+		li.color.white(data-color='white')
+		li.color.black(data-color='black')
+		li.color.purple(data-color='purple')
+		li.color.pink(data-color='pink')
+		li.color.red(data-color='red')
+		li.color.orange(data-color='orange')
+		li.color.yellow(data-color='yellow')
+		li.color.lime(data-color='lime')
+		li.color.green(data-color='green')
+		li.color.turk(data-color='turk')
+		li.color.blue(data-color='blue')
+		li.color.lightblue(data-color='lightblue')
+	#draw Enable Draw
+script
+	var settings = {
+		start_col: #{start_col},
+		start_row: #{start_row},
+		server_address: '#{server_address}'
+	};	
+script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js')
+script(src='https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js')
+script(src='/javascripts/jquery.infinitedrag.js')
+script(src='/javascripts/socket.io.min.js')
+script(src='/javascripts/script.js')
