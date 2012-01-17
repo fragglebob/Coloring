@@ -13,13 +13,18 @@
 
 	var coloring = {
 
-		socket_address : settings.server_address,
+		socket_address : settings.socket_address,
 		socket : 0,
 		socket_connected: false,
 
 		$draggable : $('#wall'),
 		$viewport : $('#viewport'),
 		$colortiles : $('#color-tiles'),
+		
+		$loading : $('#loading'),
+		$loadingbar : $('#loadingbar'),
+		
+		load : 0,
 
 		draw_color : 'white',
 		draw_mode : false,
@@ -51,8 +56,14 @@
 		end_row : 0,
 
 		init: function(){
+			coloring.$loadingbar.animate({width:'20%'},200,function(){
+				coloring.load = 20;
+			});
 			coloring.socket = io.connect(coloring.socket_address);
 			coloring.socket.on('confirm-connection', function (data) {
+				coloring.$loadingbar.animate({width:'60%'},200,function(){
+					coloring.load = 60;
+				});
 				coloring.socket_connected = data;
 			});
 			coloring.$draggable.css({
@@ -179,6 +190,13 @@
 			    $.each(data, function(index,value) {
 			    	coloring.color_square(value.coords, value.color)
 			    });
+			    if(coloring.load < 100){
+			    	coloring.$loadingbar.animate({width:'100%'},200,function(){
+						coloring.load = 100;
+						coloring.$loadingbar.fadeOut(200);
+						coloring.$loading.fadeOut(200);
+					});
+				}
 			});
 		},
 		color_square : function(coords, color) {
