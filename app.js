@@ -7,7 +7,6 @@ var express = require('express')
   , app = module.exports = express.createServer()
   , io = require('socket.io').listen(app)
   , mongoose = require('mongoose');
-var os = require('os');
 // Configuration
 
 app.configure(function(){
@@ -57,6 +56,13 @@ var Color = mongoose.model('ColorModel', ColorSchema);
 var server_port = 3210
   , server_host = 'localhost';
 
+var user_locations = {}
+  , current_users = [];
+
+var interesting_locations = {}
+  , interesting_ids = []
+  , interseting_delay = 0;
+
 // Routes
 app.get('/:col/:row', function(req, res, next){
 	var col = req.params.col
@@ -73,13 +79,28 @@ app.get('/:col/:row', function(req, res, next){
 	}
 });
 app.get('/', function(req, res){
+	var col = 0
+	  , row = 0;
+	if(current_users.length > 0){
+		var pos = user_locations[current_users[Math.floor(Math.random()*current_users.length)]];
+		col = pos.col;
+		row = pos.row;
+	} else if(interesting_ids.length > 0){
+		var pos = interesting_locations[interesting_ids[Math.floor(Math.random()*interesting_ids.length)]];
+		col = pos.col;
+		row = pos.row;
+	}
+
 	var server_address = server_host + ':' + server_port;
-	res.render('index', { title: 'Color', server_address: server_address, start_col: 0, start_row: 0 })
+	res.render('index', { title: 'Color', server_address: server_address, start_col: col, start_row: row })
 });
 
 
 // On Connection
 io.sockets.on('connection', function (socket) {
+
+	current_users.push(socket.id);
+
 	// Send Verifaction of connection
 	socket.emit('confirm-connection', true);
 	
@@ -118,10 +139,45 @@ io.sockets.on('connection', function (socket) {
 				socket.broadcast.emit('change-color', data);
 			});
 		}
+		if(interseting_delay > 30){
+			var countQuery = Color.find({})
+			countQuery.where('coordy').$gte(data.coordy - 7);
+			countQuery.where('coordx').$gte(data.coordx - 7);
+			countQuery.where('coordy').$lte(data.coordy + 7);
+			countQuery.where('coordx').$lte(data.coordx + 7);
+
+			countQuery.count(function(err,count){
+				if (err) { console.log('Error counting for interesting areas.'); return;  }
+				if(count > 60){
+					interesting_locations[data.coords] = {
+						col : data.coordx,
+						row : data.coordy
+					}
+					interesting_ids.push(data.coords);
+					console.log(interesting_locations);
+				}
+			});
+			if(interesting_ids.length > 20){
+				var interesting_id;
+				while(interesting_ids.length > 10){
+					interesting_id = interesting_ids[Math.floor(Math.random()*interesting_ids.length)]
+					delete interesting_locations[interesting_id];
+    				interesting_ids.splice(interesting_ids.indexOf(interesting_id), 1);
+    			}
+			}
+			interseting_delay = 0;
+		}
+		interseting_delay++;
+
 	});
 	// On asking for a new area of color
 	socket.on('get-area', function (top, right, bottom, left) {
-	
+
+		user_locations[socket.id] = {
+			col : Math.ceil((left + right) / 2),
+			row : Math.ceil((top + bottom) / 2),
+		}
+
 		// Set up query
 		var query = Color.find({});
 		query.where('coordy').$gte(top);
@@ -145,6 +201,10 @@ io.sockets.on('connection', function (socket) {
 		});
 
 	});
+	socket.on('disconnect', function () {
+    	delete user_locations[socket.id];
+    	current_users.splice(current_users.indexOf(socket.id), 1);
+    });
 });
 app.listen(server_port);
 console.log("Express server listening on port %d at %s in %s mode", server_port, server_host ,app.settings.env);
