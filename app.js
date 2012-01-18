@@ -83,12 +83,16 @@ app.get('/', function(req, res){
 	  , row = 0;
 	if(current_users.length > 0){
 		var pos = user_locations[current_users[Math.floor(Math.random()*current_users.length)]];
-		col = pos.col;
-		row = pos.row;
+		if(pos !== undefined){
+			col = pos.col;
+			row = pos.row;
+		}
 	} else if(interesting_ids.length > 0){
 		var pos = interesting_locations[interesting_ids[Math.floor(Math.random()*interesting_ids.length)]];
-		col = pos.col;
-		row = pos.row;
+		if(pos !== undefined){
+			col = pos.col;
+			row = pos.row;
+		}
 	}
 
 	var server_address = server_host + ':' + server_port;
