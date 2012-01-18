@@ -13,17 +13,26 @@
 
 	var coloring = {
 
-		socket_address : settings.socket_address,
+		server_address : settings.socket_address,
+
 		socket : 0,
 		socket_connected: false,
 
 		$draggable : $('#wall'),
 		$viewport : $('#viewport'),
 		$colortiles : $('#color-tiles'),
-		
+
 		$loading : $('#loading'),
 		$loadingbar : $('#loadingbar'),
-		
+
+		$coords : $('#coords'),
+		$coord_link : $('#coord-link'),
+
+		current_coords : {
+			x : 0,
+			y : 0,
+		},
+
 		load : 0,
 
 		draw_color : 'white',
@@ -59,7 +68,7 @@
 			coloring.$loadingbar.animate({width:'20%'},200,function(){
 				coloring.load = 20;
 			});
-			coloring.socket = io.connect(coloring.socket_address);
+			coloring.socket = io.connect(coloring.server_address);
 			coloring.socket.on('confirm-connection', function (data) {
 				coloring.$loadingbar.animate({width:'60%'},200,function(){
 					coloring.load = 60;
@@ -91,6 +100,11 @@
 					coloring.create_tile(i, j);
 				}
 			}
+
+			coloring.update_coords(coloring.start_col, coloring.start_row);
+			coloring.$coord_link.focus(function(){
+				coloring.$coord_link.select();
+			});
 
 			// Color in those squares. :)
 			coloring.get_area(coloring.start_row - 2, coloring.end_col + 2, coloring.end_row + 2, coloring.start_col - 2);
@@ -257,6 +271,9 @@
 					}
 				}
 			}
+
+			coloring.update_coords(visible_left_col, visible_top_row);
+
 			coloring.get_area(visible_top_row, visible_left_col + coloring.viewport_cols + 3, visible_top_row + coloring.viewport_rows + 3, visible_left_col);
 			// If tooooo many squares
 			if(coloring._numsquares > coloring._maxsquares){
@@ -330,7 +347,7 @@
 				half_vw_width = coloring.$viewport.width() / 2,
 				half_vw_height = coloring.$viewport.height() / 2,
 				offset = coloring.$draggable.offset();
-				
+
 			var new_offset = { 
 				left: -x - (half_width - half_vw_width), 
 				top: -y - (half_height - half_vw_height)
@@ -338,7 +355,13 @@
 			coloring.$draggable.offset(new_offset);
 			coloring.update_tiles();
 		},
-		
+		update_coords : function(x,y){
+			coloring.current_coords.x = x + Math.ceil(coloring.viewport_cols / 2); 
+			coloring.current_coords.y = y + Math.ceil(coloring.viewport_rows / 2);
+			coloring.$coord_link.val('http://' + settings.server_address + '/' + coloring.current_coords.x + '/' + coloring.current_coords.y + '/');
+			coloring.$coords.text(coloring.current_coords.x + ", " + coloring.current_coords.y);
+		},
+
 	};
 	coloring.init();
     document.onkeydown = function(e) {

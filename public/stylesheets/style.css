@@ -80,6 +80,24 @@ html, body{
 	padding: 5px;
 	text-align: center;
 }
+#color-tiles #coords {
+	color: white;
+	font-family: sans-serif;
+	font-weight: bold;
+	position: absolute;
+	bottom: 50px;
+	right: 0;
+	background: blue;
+	padding: 5px;
+	text-align: center;
+	width: 90px;
+}
+#color-tiles #coord-link {
+	position: absolute;
+	bottom: 80px;
+	right: 0;
+	width: 90px;
+}
 .purple{
     background: #5B3A8F;
 }
@@ -99,7 +117,7 @@ html, body{
 	background: #94DE02;
 }
 .green{
-    background: #32B33C; /* #61B40D */
+    background: #32B33C;
 }
 .turk{
 	background: #0FD8CB;
